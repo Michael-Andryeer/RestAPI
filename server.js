@@ -19,6 +19,7 @@ const route = router.get('/', (request,response,next) => {
 app.use('/',route)
 
 server.listen(port)
+server.on('error',onError)
 console.log('API rodando na porta ' + port)
 
 function normalizePort(value) {
@@ -33,4 +34,26 @@ function normalizePort(value) {
     }
 
     return false
+}
+
+function onError(error) {
+    if(error.syscall !== 'listen'){
+        throw error
+    }
+
+    const bind = typeof port ==='string'
+       ? 'Pipe'+ port
+        : 'Port'+ port
+
+        switch(error.code) {
+            case 'EACCES':
+                console.error(bind +'requer privilégios de administrador.')
+                process.exit(1)
+            case 'EADDRINUSE':
+                console.error(bind +'já está em uso.')
+                process.exit(1)
+                break;
+            default:
+                throw error
+        }
 }
