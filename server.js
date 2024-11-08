@@ -1,7 +1,6 @@
 import http from 'http';
 import debug from 'debug';
 import express from 'express';
-import { version } from 'os';
 
 const app = express()
 const port = normalizePort(process.env.PORT || '3000')
@@ -20,7 +19,8 @@ app.use('/',route)
 
 server.listen(port)
 server.on('error',onError)
-console.log('API rodando na porta ' + port)
+server.on('listening',onListening)
+console.log('API running on port ' + port)
 
 function normalizePort(value) {
     const port = parseInt(value,10)
@@ -56,4 +56,12 @@ function onError(error) {
             default:
                 throw error
         }
+}
+
+function onListening(){
+    const addr = server.address()
+    const bind = typeof addr.port ==='string'
+       ? 'Pipe'+ addr.port
+        : 'Port'+ addr.port
+    debug('Listening on' + bind)
 }
